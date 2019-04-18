@@ -80,6 +80,8 @@ public:
     float pll_kp_ = 0.0f;   // [count/s / count]
     float pll_ki_ = 0.0f;   // [(count/s^2) / count]
 
+    float vel_estimate_filtered = 0.0f; //[count/s]
+
     int16_t tim_cnt_sample_ = 0; // 
     // Updated by low_level pwm_adc_cb
     uint8_t hall_state_ = 0x0; // bit[0] = HallA, .., bit[2] = HallC
