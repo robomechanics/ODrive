@@ -16,10 +16,11 @@ public:
     // highest level of control, to allow "<" style comparisons.
     enum ControlMode_t{
         CTRL_MODE_VOLTAGE_CONTROL = 0,
-        CTRL_MODE_CURRENT_CONTROL = 1,
-        CTRL_MODE_VELOCITY_CONTROL = 2,
-        CTRL_MODE_POSITION_CONTROL = 3,
-        CTRL_MODE_TRAJECTORY_CONTROL = 4
+	CTRL_MODE_TORQUE_CONTROL = 1, // Added custom torque control option
+        CTRL_MODE_CURRENT_CONTROL = 2,
+        CTRL_MODE_VELOCITY_CONTROL = 3,
+        CTRL_MODE_POSITION_CONTROL = 4,
+        CTRL_MODE_TRAJECTORY_CONTROL = 5
     };
 
     struct Config_t {
@@ -28,7 +29,7 @@ public:
         float vel_gain = 5.0f / 10000.0f;  // [A/(counts/s)]
         // float vel_gain = 5.0f / 200.0f, // [A/(rad/s)] <sensorless example>
         float vel_integrator_gain = 10.0f / 10000.0f;  // [A/(counts/s * s)]
-        float vel_limit = 20000.0f;        // [counts/s]
+        float vel_limit = 50000.0f;        // [counts/s]
         float vel_limit_tolerance = 1.2f;  // ratio to vel_lim. 0.0f to disable
         float vel_ramp_rate = 10000.0f;  // [(counts/s) / s]
         bool setpoints_in_cpr = false;
