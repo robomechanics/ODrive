@@ -102,6 +102,7 @@ public:
             make_protocol_property("pos_cpr", &pos_cpr_),
             make_protocol_property("hall_state", &hall_state_),
             make_protocol_property("vel_estimate", &vel_estimate_),
+            make_protocol_property("vel_estimate_filtered", &vel_estimate_filtered),
             // make_protocol_property("pll_kp", &pll_kp_),
             // make_protocol_property("pll_ki", &pll_ki_),
             make_protocol_object("config",
