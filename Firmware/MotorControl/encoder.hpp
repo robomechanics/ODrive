@@ -82,7 +82,7 @@ public:
 
     /* CUSTOM */
     float vel_filtered_ = 0.0f; //[count/s]
-    float vel_filter_alpha_ = 0.05f; // update rate for low pass filter on velocity
+    float vel_filter_alpha_ = 0.0005f; // update rate for low pass filter on velocity
     /* */
 
 
