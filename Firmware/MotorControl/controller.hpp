@@ -16,7 +16,7 @@ public:
     // highest level of control, to allow "<" style comparisons.
     enum ControlMode_t{
         CTRL_MODE_VOLTAGE_CONTROL = 0,
-	CTRL_MODE_TORQUE_CONTROL = 1, // Added custom torque control option
+	    CTRL_MODE_TORQUE_CONTROL = 1, // Added custom torque control option
         CTRL_MODE_CURRENT_CONTROL = 2,
         CTRL_MODE_VELOCITY_CONTROL = 3,
         CTRL_MODE_POSITION_CONTROL = 4,

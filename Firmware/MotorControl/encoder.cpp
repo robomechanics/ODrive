@@ -320,6 +320,9 @@ bool Encoder::update() {
     count_in_cpr_ += delta_enc;
     count_in_cpr_ = mod(count_in_cpr_, config_.cpr);
 
+    // Save prior position estimate
+    float prior_pos_estimate = pos_estimate_;
+
     //// run pll (for now pll is in units of encoder counts)
     // Predict current pos
     pos_estimate_ += current_meas_period * vel_estimate_;
@@ -332,12 +335,17 @@ bool Encoder::update() {
     pos_estimate_ += current_meas_period * pll_kp_ * delta_pos;
     pos_cpr_      += current_meas_period * pll_kp_ * delta_pos_cpr;
     pos_cpr_ = fmodf_pos(pos_cpr_, (float)(config_.cpr));
-    vel_estimate_      += current_meas_period * pll_ki_ * delta_pos_cpr;
+
+    // Velocity Estimation
+    vel_estimate_ += current_meas_period * pll_ki_ * delta_pos_cpr;
     bool snap_to_zero_vel = false;
     if (fabsf(vel_estimate_) < 0.5f * current_meas_period * pll_ki_) {
         vel_estimate_ = 0.0f; //align delta-sigma on zero to prevent jitter
         snap_to_zero_vel = true;
     }
+
+    // Velocity Filter
+    vel_filtered_ = (1.0f - vel_filter_alpha_) * vel_filtered_ + vel_filter_alpha_ * (pos_estimate_ - prior_pos_estimate)/(current_meas_period);
 
     //// run encoder count interpolation
     int32_t corrected_enc = count_in_cpr_ - config_.offset;

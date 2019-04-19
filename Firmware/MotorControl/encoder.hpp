@@ -80,7 +80,11 @@ public:
     float pll_kp_ = 0.0f;   // [count/s / count]
     float pll_ki_ = 0.0f;   // [(count/s^2) / count]
 
-    float vel_estimate_filtered = 0.0f; //[count/s]
+    /* CUSTOM */
+    float vel_filtered_ = 0.0f; //[count/s]
+    float vel_filter_alpha_ = 0.05f; // update rate for low pass filter on velocity
+    /* */
+
 
     int16_t tim_cnt_sample_ = 0; // 
     // Updated by low_level pwm_adc_cb
@@ -102,7 +106,8 @@ public:
             make_protocol_property("pos_cpr", &pos_cpr_),
             make_protocol_property("hall_state", &hall_state_),
             make_protocol_property("vel_estimate", &vel_estimate_),
-            make_protocol_property("vel_estimate_filtered", &vel_estimate_filtered),
+            make_protocol_property("vel_filtered", &vel_filtered_),
+            make_protocol_property("vel_filter_alpha", &vel_filter_alpha_),
             // make_protocol_property("pll_kp", &pll_kp_),
             // make_protocol_property("pll_ki", &pll_ki_),
             make_protocol_object("config",
