@@ -16,10 +16,11 @@ public:
     // highest level of control, to allow "<" style comparisons.
     enum ControlMode_t{
         CTRL_MODE_VOLTAGE_CONTROL = 0,
-        CTRL_MODE_CURRENT_CONTROL = 1,
-        CTRL_MODE_VELOCITY_CONTROL = 2,
-        CTRL_MODE_POSITION_CONTROL = 3,
-        CTRL_MODE_TRAJECTORY_CONTROL = 4
+        CTRL_MODE_FEEDFORWARD_CONTROL = 1,
+        CTRL_MODE_CURRENT_CONTROL = 2,
+        CTRL_MODE_VELOCITY_CONTROL = 3,
+        CTRL_MODE_POSITION_CONTROL = 4,
+        CTRL_MODE_TRAJECTORY_CONTROL = 5
     };
 
     struct Config_t {
@@ -32,6 +33,10 @@ public:
         float vel_limit_tolerance = 1.2f;  // ratio to vel_lim. 0.0f to disable
         float vel_ramp_rate = 10000.0f;  // [(counts/s) / s]
         bool setpoints_in_cpr = false;
+
+        // my custom gains for feedforward control
+        float ff_pos_gain = 0.0008f; // A/counts
+        float ff_vel_gain = 0.0002f;  // [A/(counts/s)]
     };
 
     Controller(Config_t& config);
@@ -50,7 +55,7 @@ public:
     void start_anticogging_calibration();
     bool anticogging_calibration(float pos_estimate, float vel_estimate);
 
-    bool update(float pos_estimate, float vel_estimate, float* current_setpoint);
+    bool update(float pos_estimate, float vel_estimate, float vel_filtered, float* current_setpoint);
 
     Config_t& config_;
     Axis* axis_ = nullptr; // set by Axis constructor
@@ -110,7 +115,9 @@ public:
                 make_protocol_property("vel_limit", &config_.vel_limit),
                 make_protocol_property("vel_limit_tolerance", &config_.vel_limit_tolerance),
                 make_protocol_property("vel_ramp_rate", &config_.vel_ramp_rate),
-                make_protocol_property("setpoints_in_cpr", &config_.setpoints_in_cpr)
+                make_protocol_property("setpoints_in_cpr", &config_.setpoints_in_cpr),
+                make_protocol_property("ff_pos_gain", &config_.ff_pos_gain),
+                make_protocol_property("ff_vel_gain", &config_.ff_vel_gain)
             ),
             make_protocol_function("set_pos_setpoint", *this, &Controller::set_pos_setpoint,
                 "pos_setpoint", "vel_feed_forward", "current_feed_forward"),

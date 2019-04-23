@@ -1,6 +1,4 @@
-
 #include "odrive_main.h"
-
 
 Controller::Controller(Config_t& config) :
     config_(config)
@@ -102,7 +100,7 @@ bool Controller::anticogging_calibration(float pos_estimate, float vel_estimate)
     return false;
 }
 
-bool Controller::update(float pos_estimate, float vel_estimate, float* current_setpoint_output) {
+bool Controller::update(float pos_estimate, float vel_estimate, float vel_filtered, float* current_setpoint_output) {
     // Only runs if anticogging_.calib_anticogging is true; non-blocking
     anticogging_calibration(pos_estimate, vel_estimate);
     float anticogging_pos = pos_estimate;
@@ -191,6 +189,15 @@ bool Controller::update(float pos_estimate, float vel_estimate, float* current_s
     // Velocity integral action before limiting
     Iq += vel_integrator_current_;
 
+    // Custom controller, feedforward current control with proportional pd controller
+    if (config_.control_mode == CTRL_MODE_FEEDFORWARD_CONTROL){
+    	Iq = current_setpoint_;
+    	float pos_err = pos_setpoint_ - pos_estimate;
+    	float vel_err = vel_setpoint_ - vel_filtered; //utilizes exponential decay filtering on velocity estimare
+    	Iq += config_.ff_pos_gain * pos_err;
+    	Iq += config_.ff_vel_gain * vel_err;
+    }
+
     // Current limiting
     bool limited = false;
     float Ilim = axis_->motor_.effective_current_lim();
@@ -215,6 +222,7 @@ bool Controller::update(float pos_estimate, float vel_estimate, float* current_s
             vel_integrator_current_ += (config_.vel_integrator_gain * current_meas_period) * v_err;
         }
     }
+
 
     if (current_setpoint_output) *current_setpoint_output = Iq;
     return true;
