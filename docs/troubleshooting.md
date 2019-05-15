@@ -7,6 +7,7 @@ Table of Contents:
 - [Common Axis Errors](#common-axis-errors)
 - [Common Motor Errors](#common-motor-errors)
 - [Common Encoder Errors](#common-encoder-errors)
+- [Common Controller Errors](#common-controller-errors)
 - [USB Connectivity Issues](#usb-connectivity-issues)
 - [Firmware Issues](#firmware-issues)
 - [Other issues that may not produce an error code](#other-issues-that-may-not-produce-an-error-code)
@@ -95,6 +96,13 @@ Confirm that your encoder is plugged into the right pins on the odrive board.
 
 Check that your encoder is a model that has an index pulse. If your encoder does not have a wire connected to pin Z on your odrive then it does not output an index pulse.
 
+## Common Controller Errors
+
+* `ERROR_OVERSPEED = 0x01`
+
+Try increasing `<axis>.controller.config.vel_limit`. The default `vel_limit` of 20,000 encoder counts per second gives a motor speed of only ~146 RPM with the common CUI-AMT102 8192 count per rotation encoder. Note: Even if you do not commanded your motor to exceed `vel_limit` sudden changes in the load placed on a motor may cause this speed to be temporarily exceeded, resulting in this error.
+
+You can also try increasing `<axis>.controller.config.vel_limit_tolerance`. The default value of 1.2 means it will only allow a 20% violation of the speed limit. You can set the `vel_limit_tolerance` to 0 to disable the check altogether.
 
 ## USB Connectivity Issues
 
@@ -141,6 +149,7 @@ Check that your encoder is a model that has an index pulse. If your encoder does
 
 ### Motor feels like it has less torque than it should and/or gets hot sitting still while under no load.
 - Encoder has likely slipped causing the motor controller to commutate the wrong windings slightly which reduces output torque and produces excess heat as the motor 'fights itself'.
+- This can also be caused if the rotor bell slips on the motor shaft. On some motors the rotor bell is secured against the shaft with a grub screw. Confirm that this screw is tight enough. For further details on how to resolve this issue see [this forum post](https://discourse.odriverobotics.com/t/motor-gets-hot-has-less-torque-in-one-direction-than-the-other/2394).
 
 ### False steps or direction changes when using step/dir
 - Prior to Odrive board V3.5 no filtering is present on the GPIO pins used for step/dir interface and so inductively coupled noise may causes false steps to be detected. Odrive V3.5 and has onboard filtering to resolve this issue.

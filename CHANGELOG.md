@@ -2,6 +2,26 @@
 Please add a note of your changes below this heading if you make a Pull Request.
 
 # Releases
+## [0.4.10] - 2019-04-24
+### Fixed
+* Index search would trigger in the wrong place.
+
+## [0.4.9] - 2019-04-23
+### Added
+* A release target for ODrive v3.6
+* Communication watchdog feature.
+* `encoder.set_linear_count(count)` function.
+* Configurable encoder offset calibration distance and speed:`calib_scan_distance` and `calib_scan_omega`
+* Encoder offset calibration debug variable `calib_scan_response`
+* Lock-in drive feature
+* Script to enable using a hall signal as index edge.
+
+### Changed
+* Encoder index search now based on the new lock-in drive feature
+
+### Fixed
+* Encoder index interrupts now disabled when not searching
+
 ## [0.4.8] - 2019-02-25
 ### Added
 * `dump_errors()` utility function in odrivetool to dump, decode and optionally clear errors.
@@ -14,6 +34,9 @@ Please add a note of your changes below this heading if you make a Pull Request.
 * Analog input. Used the same way as the PWM input mappings.
 * Voltage limit soft clamping instead of ERROR_MODULATION_MAGNITUDE in gimbal motor closed loop.
 * Thermal current limit with linear derating.
+
+### Changed
+* Unified lockin drive modes. Current for index searching and encoder offset calibration now moved to axis.lockin.current.
 
 ### Fixed
 * Added required 1.5 cycle phase shift between ADC and PWM, lack thereof caused unstable current controller at high eRPM.
